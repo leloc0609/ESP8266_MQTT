@@ -5,14 +5,15 @@
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883
 #define AIO_USERNAME    "lntloc"
-#define AIO_KEY         "aio_bqzM39FKcyRvOl1DsQYqyJRiJ95d"
+#define AIO_KEY         "aio_fxuI59tslT2TmxnvHgpevHQTQM4U"
 WiFiClient client;
 const char* ssid     = "Huong";         // The SSID (name) of the Wi-Fi network you want to connect to
 const char* password = "0989025749";     // The password of the Wi-Fi network
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
-Adafruit_MQTT_Subscribe temp = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/bbc-temp");
+Adafruit_MQTT_Subscribe button = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/bbc-led");
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
@@ -31,7 +32,7 @@ void setup() {
   Serial.println("Connection established!");  
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
-  mqtt.subscribe(&temp);
+  mqtt.subscribe(&button);
 }
 void MQTT_connect() {
   int8_t ret;
@@ -54,11 +55,21 @@ void MQTT_connect() {
 
 void loop() { 
   MQTT_connect();
+  if(! mqtt.ping()) {
+    mqtt.disconnect();
+  }
   Adafruit_MQTT_Subscribe *subscription;
   while ((subscription = mqtt.readSubscription(5000))) {
-      if (subscription == &temp) {
+      if (subscription == &button) {
         Serial.print(F("Got: "));
-        Serial.println((char *)temp.lastread);
+        Serial.println((char *)button.lastread);
+        if (strcmp((char *)button.lastread, "1") == 0) {
+          digitalWrite(LED_BUILTIN, LOW); 
+        }
+        if (strcmp((char *)button.lastread, "0") == 0) {
+          digitalWrite(LED_BUILTIN, HIGH); 
+        }
       }
+      
   }
 }
