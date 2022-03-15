@@ -22,7 +22,7 @@ void setup() {
 
   int i = 0;
   while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
-    delay(100);
+    delay(1000);
     Serial.print(++i); Serial.print(' ');
   }
 
@@ -61,7 +61,6 @@ void loop() {
     if(! mqtt.connected())
       connect();
   }
-  
   if (Serial.available() > 0) {
     for(int i =0;i<3;i++){
       incomingByte[i] = Serial.read();
@@ -69,5 +68,4 @@ void loop() {
     int temp1 = (incomingByte[0]-48)*10+(incomingByte[1]-48);
     temp.publish(temp1);
   }
-
 }
