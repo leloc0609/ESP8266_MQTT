@@ -4,8 +4,8 @@
 
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883
-#define AIO_USERNAME    "lntloc"
-#define AIO_KEY         "aio_fxuI59tslT2TmxnvHgpevHQTQM4U"
+#define AIO_USERNAME    "xxxx"
+#define AIO_KEY         "xxxx"
 WiFiClient client;
 const char* ssid     = "Huong";         // The SSID (name) of the Wi-Fi network you want to connect to
 const char* password = "0989025749";     // The password of the Wi-Fi network
@@ -24,7 +24,10 @@ void setup() {
 
   int i = 0;
   while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
-    delay(1000);
+    digitalWrite(LED_BUILTIN, LOW); 
+    delay(500);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
     Serial.print(++i); Serial.print(' ');
   }
 
@@ -33,6 +36,7 @@ void setup() {
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
   mqtt.subscribe(&button);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 void MQTT_connect() {
   int8_t ret;
